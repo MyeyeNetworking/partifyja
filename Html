@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eventify - Discover Amazing Events Near You</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <h2>Eventify</h2>
+      </div>
+      <div class="nav-menu">
+        <a href="#browse" class="nav-link">Browse</a>
+        <a href="#categories" class="nav-link">Categories</a>
+        <a href="#nearby" class="nav-link">Nearby</a>
+        <button class="btn btn-outline" id="loginBtn">Log in</button>
+        <button class="btn btn-primary" id="signupBtn">Sign up</button>
+        <div class="user-menu hidden" id="userMenu">
+          <span class="user-name" id="userName"></span>
+          <button class="btn btn-outline" id="dashboardBtn">Dashboard</button>
+          <button class="btn btn-outline" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero animate-in">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Discover Amazing
+        <span class="text-green">Events Near You</span>
+      </h1>
+      <p class="hero-subtitle">
+        From concerts to comedy shows, festivals to food events. Find and book
+        tickets for the experiences you'll never forget.
+      </p>
+      <div class="search-container">
+        <input type="text" placeholder="Search events, artists, venues..." class="search-input" id="searchInput">
+        <button class="btn btn-primary search-btn" id="searchBtn">Search</button>
+      </div>
+      <div class="search-filters hidden" id="searchFilters">
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+          <option value="concerts">Concerts</option>
+          <option value="festivals">Festivals</option>
+          <option value="sports">Sports</option>
+          <option value="comedy">Comedy</option>
+          <option value="theater">Theater</option>
+          <option value="food">Food & Drink</option>
+        </select>
+        <input type="date" id="dateFilter" placeholder="Date">
+        <input type="text" id="locationFilter" placeholder="Location">
+        <select id="priceFilter">
+          <option value="">Any Price</option>
+          <option value="free">Free</option>
+          <option value="0-50">$0-$50</option>
+          <option value="50-100">$50-$100</option>
+          <option value="100+">$100+</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Events Carousel -->
+  <section id="upcoming" class="upcoming-section animate-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Upcoming Events</h2>
+        <div class="carousel-controls">
+          <button class="carousel-btn prev" id="prevBtn">‹</button>
+          <button class="carousel-btn next" id="nextBtn">›</button>
+        </div>
+      </div>
+      <div class="carousel-container">
+        <div class="events-carousel" id="eventsCarousel">
+          <!-- Events will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Browse Categories -->
+  <section id="categories" class="categories-section animate-in">
+    <div class="container">
+      <h2 class="section-title">Browse Categories</h2>
+      <div class="categories-grid">
+        <div class="category-card concerts animate-in" data-category="concerts">
+          <h3>Concerts</h3>
+        </div>
+        <div class="category-card festivals animate-in" data-category="festivals">
+          <h3>Festivals</h3>
+        </div>
+        <div class="category-card sports animate-in" data-category="sports">
+          <h3>Sports</h3>
+        </div>
+        <div class="category-card comedy animate-in" data-category="comedy">
+          <h3>Comedy</h3>
+        </div>
+        <div class="category-card theater animate-in" data-category="theater">
+          <h3>Theater</h3>
+        </div>
+        <div class="category-card food animate-in" data-category="food">
+          <h3>Food & Drink</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Events -->
+  <section id="featured" class="featured-section animate-in">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Events</h2>
+        <a href="#" class="show-all">Show all</a>
+      </div>
+      <div class="events-grid" id="featuredEvents">
+        <!-- Events will be populated dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Results (Hidden by default) -->
+  <section id="searchResults" class="search-results-section hidden">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Search Results</h2>
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+      <div class="events-grid" id="searchResultsGrid">
+        <!-- Search results will be populated here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Eventify</h3>
+          <p>Discover and book amazing events happening near you.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="#categories" data-category="concerts">Concerts</a></li>
+            <li><a href="#categories" data-category="festivals">Festivals</a></li>
+            <li><a href="#categories" data-category="sports">Sports</a></li>
+            <li><a href="#categories" data-category="comedy">Comedy</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#" id="helpCenter">Help Center</a></li>
+            <li><a href="#" id="contactUs">Contact Us</a></li>
+            <li><a href="#" id="refunds">Refunds</a></li>
+            <li><a href="#" id="safety">Safety</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#" id="about">About</a></li>
+            <li><a href="#" id="careers">Careers</a></li>
+            <li><a href="#" id="press">Press</a></li>
+            <li><a href="#" id="partners">Partners</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Eventify. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Auth Modals -->
+  <div class="modal hidden" id="authModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="authTitle">Log In</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="authForm">
+          <div class="form-group">
+            <input type="email" id="email" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="password" placeholder="Password" required>
+          </div>
+          <div class="form-group hidden" id="nameGroup">
+            <input type="text" id="fullName" placeholder="Full Name">
+          </div>
+          <button type="submit" class="btn btn-primary full-width" id="authSubmit">Log In</button>
+        </form>
+        <p class="auth-switch">
+          <span id="authSwitchText">Don't have an account?</span>
+          <a href="#" id="authSwitchLink">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Detail Modal -->
+  <div class="modal hidden" id="eventModal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2 id="eventTitle"></h2>
+        <button class="close-btn" id="closeEventModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="event-detail-content" id="eventDetailContent">
+          <!-- Event details will be populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Dashboard (Hidden by default) -->
+  <div class="page hidden" id="dashboardPage">
+    <div class="container">
+      <div class="dashboard-header">
+        <h1>My Dashboard</h1>
+        <button class="btn btn-primary" id="createEventBtn">Create Event</button>
+      </div>
+      
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="my-events">My Events</button>
+        <button class="tab-btn" data-tab="bookings">My Bookings</button>
+        <button class="tab-btn" data-tab="create-event">Create Event</button>
+      </div>
+
+      <div class="tab-content active" id="my-events">
+        <div class="events-grid" id="userEvents">
+          <!-- User's events will be populated here -->
+        </div>
+      </div>
+
+      <div class="tab-content" id="bookings">
+        <div class="bookings-list" id="userBookings">
+          <!-- User's bookings will be populated here -->
+        </div>
+      </div>
+
+      <div class="tab-content" id="create-event">
+        <form class="create-event-form" id="createEventForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="eventName">Event Name</label>
+              <input type="text" id="eventName" required>
+            </div>
+            <div class="form-group">
+              <label for="eventCategory">Category</label>
+              <select id="eventCategory" required>
+                <option value="">Select Category</option>
+                <option value="concerts">Concerts</option>
+                <option value="festivals">Festivals</option>
+                <option value="sports">Sports</option>
+                <option value="comedy">Comedy</option>
+                <option value="theater">Theater</option>
+                <option value="food">Food & Drink</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="eventDate">Date</label>
+              <input type="datetime-local" id="eventDate" required>
+            </div>
+            <div class="form-group">
+              <label for="eventPrice">Price ($)</label>
+              <input type="number" id="eventPrice" min="0" step="0.01">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="eventLocation">Location</label>
+            <input type="text" id="eventLocation" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="eventDescription">Description</label>
+            <textarea id="eventDescription" rows="4" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="eventImage">Event Image URL</label>
+            <input type="url" id="eventImage">
+          </div>
+          
+          <div class="form-group">
+            <label for="eventPlayers">Players/Participants (comma separated)</label>
+            <input type="text" id="eventPlayers" placeholder="Artist 1, Artist 2, Artist 3">
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Create Event</button>
+        </form>
+      </div>
+      
+      <button class="btn btn-outline" id="backToMain">Back to Main</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
