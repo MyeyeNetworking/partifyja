@@ -1,0 +1,825 @@
+// Event interface
+interface Event {
+  id: string;
+  title: string;
+  artist: string;
+  category: string;
+  location: string;
+  date: string;
+  price: number;
+  description: string;
+  image?: string;
+  players?: string[];
+  createdBy?: string;
+}
+
+// User interface
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  events: string[];
+  bookings: string[];
+}
+
+// Booking interface
+interface Booking {
+  id: string;
+  eventId: string;
+  userId: string;
+  quantity: number;
+  totalPrice: number;
+  bookingDate: string;
+  status: string;
+}
+
+class EventifyApp {
+  private events: Event[] = [];
+  private users: User[] = [];
+  private bookings: Booking[] = [];
+  private currentUser: User | null = null;
+  private carouselPosition = 0;
+  private isAuthModalOpen = false;
+  private isEventModalOpen = false;
+  private isDashboardVisible = false;
+
+  constructor() {
+    this.loadSampleData();
+    this.loadFromStorage();
+    this.initializeEventListeners();
+    this.renderEvents();
+    this.updateAuthUI();
+  }
+
+  // Load sample events data
+  private loadSampleData(): void {
+    const sampleEvents: Event[] = [
+      {
+        id: '1',
+        title: 'Summer Music Festival',
+        artist: 'Various Artists',
+        category: 'concerts',
+        location: 'Central Park, NYC',
+        date: '2025-08-15T19:00',
+        price: 89,
+        description: 'Join us for an amazing summer music festival featuring top artists from around the world. Experience unforgettable performances under the stars.',
+        players: ['Taylor Swift', 'Ed Sheeran', 'Billie Eilish', 'The Weeknd']
+      },
+      {
+        id: '2',
+        title: 'Tech Conference 2025',
+        artist: 'Industry Leaders',
+        category: 'technology',
+        location: 'San Francisco, CA',
+        date: '2025-09-20T09:00',
+        price: 299,
+        description: 'The biggest tech conference of the year featuring keynotes from industry leaders and hands-on workshops.',
+        players: ['Satya Nadella', 'Tim Cook', 'Sundar Pichai', 'Elon Musk']
+      },
+      {
+        id: '3',
+        title: 'Comedy Night Live',
+        artist: 'Stand-up Comics',
+        category: 'comedy',
+        location: 'Comedy Club, LA',
+        date: '2025-07-28T20:00',
+        price: 35,
+        description: 'Get ready to laugh until your sides hurt with our lineup of hilarious comedians.',
+        players: ['Kevin Hart', 'Amy Schumer', 'Dave Chappelle', 'Trevor Noah']
+      },
+      {
+        id: '4',
+        title: 'Art Gallery Opening',
+        artist: 'Local Artists',
+        category: 'art',
+        location: 'Downtown Gallery',
+        date: '2025-08-10T18:00',
+        price: 0,
+        description: 'Discover amazing contemporary art from talented local artists. Wine and refreshments included.',
+        players: ['Maria Rodriguez', 'James Chen', 'Sarah Williams', 'David Miller']
+      },
+      {
+        id: '5',
+        title: 'Food & Wine Festival',
+        artist: 'Chef Collaborations',
+        category: 'food',
+        location: 'Napa Valley, CA',
+        date: '2025-09-05T12:00',
+        price: 125,
+        description: 'Indulge in exquisite culinary experiences with renowned chefs and premium wine tastings.',
+        players: ['Gordon Ramsay', 'Julia Child', 'Anthony Bourdain', 'Emeril Lagasse']
+      },
+      {
+        id: '6',
+        title: 'Rock Concert Spectacular',
+        artist: 'Rock Legends',
+        category: 'concerts',
+        location: 'Madison Square Garden, NYC',
+        date: '2025-10-15T20:00',
+        price: 150,
+        description: 'An electrifying night of rock music featuring legendary bands and rising stars.',
+        players: ['Foo Fighters', 'Red Hot Chili Peppers', 'Arctic Monkeys', 'Imagine Dragons']
+      }
+    ];
+
+    // Only load sample data if no events exist in storage
+    if (this.events.length === 0) {
+      this.events = sampleEvents;
+      this.saveToStorage();
+    }
+  }
+
+  // Initialize all event listeners
+  private initializeEventListeners(): void {
+    // Auth buttons
+    document.getElementById('loginBtn')?.addEventListener('click', () => this.openAuthModal('login'));
+    document.getElementById('signupBtn')?.addEventListener('click', () => this.openAuthModal('signup'));
+    document.getElementById('logoutBtn')?.addEventListener('click', () => this.logout());
+    document.getElementById('dashboardBtn')?.addEventListener('click', () => this.showDashboard());
+    document.getElementById('backToMain')?.addEventListener('click', () => this.hideDashboard());
+
+    // Modal close buttons
+    document.getElementById('closeModal')?.addEventListener('click', () => this.closeAuthModal());
+    document.getElementById('closeEventModal')?.addEventListener('click', () => this.closeEventModal());
+
+    // Auth form
+    document.getElementById('authForm')?.addEventListener('submit', (e) => this.handleAuthSubmit(e));
+    document.getElementById('authSwitchLink')?.addEventListener('click', (e) => this.switchAuthMode(e));
+
+    // Search functionality
+    document.getElementById('searchBtn')?.addEventListener('click', () => this.performSearch());
+    document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.performSearch();
+    });
+    document.getElementById('searchInput')?.addEventListener('focus', () => this.showSearchFilters());
+
+    // Filter changes
+    document.getElementById('categoryFilter')?.addEventListener('change', () => this.performSearch());
+    document.getElementById('dateFilter')?.addEventListener('change', () => this.performSearch());
+    document.getElementById('locationFilter')?.addEventListener('change', () => this.performSearch());
+    document.getElementById('priceFilter')?.addEventListener('change', () => this.performSearch());
+
+    // Carousel controls
+    document.getElementById('prevBtn')?.addEventListener('click', () => this.prevCarousel());
+    document.getElementById('nextBtn')?.addEventListener('click', () => this.nextCarousel());
+
+    // Category cards
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.getAttribute('data-category');
+        if (category) this.filterByCategory(category);
+      });
+    });
+
+    // Dashboard tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        if (tab) this.switchTab(tab);
+      });
+    });
+
+    // Create event form
+    document.getElementById('createEventForm')?.addEventListener('submit', (e) => this.handleCreateEvent(e));
+    document.getElementById('createEventBtn')?.addEventListener('click', () => this.switchTab('create-event'));
+
+    // Modal backdrop click
+    document.getElementById('authModal')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('authModal')) this.closeAuthModal();
+    });
+    document.getElementById('eventModal')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('eventModal')) this.closeEventModal();
+    });
+  }
+
+  // Authentication methods
+  private openAuthModal(mode: 'login' | 'signup'): void {
+    this.isAuthModalOpen = true;
+    const modal = document.getElementById('authModal');
+    const title = document.getElementById('authTitle');
+    const submitBtn = document.getElementById('authSubmit');
+    const switchText = document.getElementById('authSwitchText');
+    const switchLink = document.getElementById('authSwitchLink');
+    const nameGroup = document.getElementById('nameGroup');
+
+    if (mode === 'login') {
+      title!.textContent = 'Log In';
+      submitBtn!.textContent = 'Log In';
+      switchText!.textContent = "Don't have an account?";
+      switchLink!.textContent = 'Sign up';
+      nameGroup?.classList.add('hidden');
+    } else {
+      title!.textContent = 'Sign Up';
+      submitBtn!.textContent = 'Sign Up';
+      switchText!.textContent = 'Already have an account?';
+      switchLink!.textContent = 'Log in';
+      nameGroup?.classList.remove('hidden');
+    }
+
+    modal?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  private closeAuthModal(): void {
+    this.isAuthModalOpen = false;
+    document.getElementById('authModal')?.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+    this.resetAuthForm();
+  }
+
+  private switchAuthMode(e: Event): void {
+    e.preventDefault();
+    const title = document.getElementById('authTitle')?.textContent;
+    this.closeAuthModal();
+    setTimeout(() => {
+      this.openAuthModal(title === 'Log In' ? 'signup' : 'login');
+    }, 100);
+  }
+
+  private handleAuthSubmit(e: Event): void {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const email = (form.querySelector('#email') as HTMLInputElement).value;
+    const password = (form.querySelector('#password') as HTMLInputElement).value;
+    const fullName = (form.querySelector('#fullName') as HTMLInputElement)?.value;
+    const isSignup = document.getElementById('authTitle')?.textContent === 'Sign Up';
+
+    if (isSignup) {
+      this.signup(email, password, fullName || '');
+    } else {
+      this.login(email, password);
+    }
+  }
+
+  private signup(email: string, password: string, name: string): void {
+    // Check if user already exists
+    const existingUser = this.users.find(user => user.email === email);
+    if (existingUser) {
+      alert('User already exists with this email!');
+      return;
+    }
+
+    // Create new user
+    const newUser: User = {
+      id: Date.now().toString(),
+      name,
+      email,
+      events: [],
+      bookings: []
+    };
+
+    this.users.push(newUser);
+    this.currentUser = newUser;
+    this.saveToStorage();
+    this.closeAuthModal();
+    this.updateAuthUI();
+    alert('Account created successfully!');
+  }
+
+  private login(email: string, password: string): void {
+    // Find user (in real app, you'd verify password)
+    const user = this.users.find(user => user.email === email);
+    if (!user) {
+      alert('User not found! Please sign up first.');
+      return;
+    }
+
+    this.currentUser = user;
+    this.saveToStorage();
+    this.closeAuthModal();
+    this.updateAuthUI();
+    alert('Logged in successfully!');
+  }
+
+  private logout(): void {
+    this.currentUser = null;
+    localStorage.removeItem('currentUser');
+    this.updateAuthUI();
+    this.hideDashboard();
+    alert('Logged out successfully!');
+  }
+
+  private resetAuthForm(): void {
+    const form = document.getElementById('authForm') as HTMLFormElement;
+    form?.reset();
+  }
+
+  private updateAuthUI(): void {
+    const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
+    const userMenu = document.getElementById('userMenu');
+    const userName = document.getElementById('userName');
+
+    if (this.currentUser) {
+      loginBtn?.classList.add('hidden');
+      signupBtn?.classList.add('hidden');
+      userMenu?.classList.remove('hidden');
+      if (userName) userName.textContent = this.currentUser.name;
+    } else {
+      loginBtn?.classList.remove('hidden');
+      signupBtn?.classList.remove('hidden');
+      userMenu?.classList.add('hidden');
+    }
+  }
+
+  // Search and filtering methods
+  private showSearchFilters(): void {
+    document.getElementById('searchFilters')?.classList.remove('hidden');
+  }
+
+  private performSearch(): void {
+    const searchTerm = (document.getElementById('searchInput') as HTMLInputElement).value.toLowerCase();
+    const categoryFilter = (document.getElementById('categoryFilter') as HTMLSelectElement).value;
+    const dateFilter = (document.getElementById('dateFilter') as HTMLInputElement).value;
+    const locationFilter = (document.getElementById('locationFilter') as HTMLInputElement).value.toLowerCase();
+    const priceFilter = (document.getElementById('priceFilter') as HTMLSelectElement).value;
+
+    let filteredEvents = this.events.filter(event => {
+      const matchesSearch = searchTerm === '' || 
+        event.title.toLowerCase().includes(searchTerm) ||
+        event.artist.toLowerCase().includes(searchTerm) ||
+        event.location.toLowerCase().includes(searchTerm) ||
+        (event.players && event.players.some(player => player.toLowerCase().includes(searchTerm)));
+
+      const matchesCategory = categoryFilter === '' || event.category === categoryFilter;
+      
+      const matchesDate = dateFilter === '' || event.date.startsWith(dateFilter);
+      
+      const matchesLocation = locationFilter === '' || event.location.toLowerCase().includes(locationFilter);
+      
+      const matchesPrice = priceFilter === '' || this.checkPriceRange(event.price, priceFilter);
+
+      return matchesSearch && matchesCategory && matchesDate && matchesLocation && matchesPrice;
+    });
+
+    this.displaySearchResults(filteredEvents, searchTerm);
+  }
+
+  private checkPriceRange(price: number, range: string): boolean {
+    switch (range) {
+      case 'free': return price === 0;
+      case '0-50': return price >= 0 && price <= 50;
+      case '50-100': return price > 50 && price <= 100;
+      case '100+': return price > 100;
+      default: return true;
+    }
+  }
+
+  private displaySearchResults(events: Event[], searchTerm: string): void {
+    const resultsSection = document.getElementById('searchResults');
+    const resultsGrid = document.getElementById('searchResultsGrid');
+    const resultsCount = document.getElementById('resultsCount');
+    const featuredSection = document.getElementById('featured');
+
+    if (events.length > 0 || searchTerm) {
+      resultsSection?.classList.remove('hidden');
+      featuredSection?.classList.add('hidden');
+      resultsCount!.textContent = `${events.length} events found`;
+      resultsGrid!.innerHTML = events.map(event => this.createEventCard(event)).join('');
+      this.attachEventCardListeners();
+    } else {
+      resultsSection?.classList.add('hidden');
+      featuredSection?.classList.remove('hidden');
+    }
+  }
+
+  private filterByCategory(category: string): void {
+    (document.getElementById('categoryFilter') as HTMLSelectElement).value = category;
+    this.performSearch();
+    document.getElementById('searchResults')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Event rendering methods
+  private renderEvents(): void {
+    this.renderCarousel();
+    this.renderFeaturedEvents();
+  }
+
+  private renderCarousel(): void {
+    const carousel = document.getElementById('eventsCarousel');
+    if (!carousel) return;
+
+    const upcomingEvents = this.events
+      .filter(event => new Date(event.date) > new Date())
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 10);
+
+    carousel.innerHTML = upcomingEvents.map(event => this.createCarouselCard(event)).join('');
+    this.attachEventCardListeners();
+  }
+
+  private renderFeaturedEvents(): void {
+    const featuredGrid = document.getElementById('featuredEvents');
+    if (!featuredGrid) return;
+
+    const featuredEvents = this.events.slice(0, 6);
+    featuredGrid.innerHTML = featuredEvents.map(event => this.createEventCard(event)).join('');
+    this.attachEventCardListeners();
+  }
+
+  private createCarouselCard(event: Event): string {
+    const players = event.players ? event.players.slice(0, 3).join(', ') : '';
+    const playersText = players ? `<div class="event-players">Players: ${players}</div>` : '';
+    
+    return `
+      <div class="event-card" data-event-id="${event.id}" style="min-width: 300px;">
+        <div class="event-image">
+          <span class="event-category">${event.category}</span>
+          ${event.image ? `<img src="${event.image}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Event Image'}
+        </div>
+        <div class="event-content">
+          <h3 class="event-title">${event.title}</h3>
+          <p class="event-artist">${event.artist}</p>
+          ${playersText}
+          <div class="event-details">
+            <span class="event-location">📍 ${event.location}</span>
+            <span class="event-date">📅 ${this.formatDate(event.date)}</span>
+          </div>
+          <div class="event-footer">
+            <span class="event-price">${event.price === 0 ? 'Free' : '$' + event.price}</span>
+            <button class="btn btn-primary btn-small get-tickets-btn" data-event-id="${event.id}">Get Tickets</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private createEventCard(event: Event): string {
+    const players = event.players ? event.players.slice(0, 2).join(', ') : '';
+    const playersText = players ? `<div class="event-players">Players: ${players}</div>` : '';
+
+    return `
+      <div class="event-card" data-event-id="${event.id}">
+        <div class="event-image">
+          <span class="event-category">${event.category}</span>
+          ${event.image ? `<img src="${event.image}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Event Image'}
+        </div>
+        <div class="event-content">
+          <h3 class="event-title">${event.title}</h3>
+          <p class="event-artist">${event.artist}</p>
+          ${playersText}
+          <div class="event-details">
+            <span class="event-location">📍 ${event.location}</span>
+            <span class="event-date">📅 ${this.formatDate(event.date)}</span>
+          </div>
+          <div class="event-footer">
+            <span class="event-price">${event.price === 0 ? 'Free' : '$' + event.price}</span>
+            <button class="btn btn-primary btn-small get-tickets-btn" data-event-id="${event.id}">Get Tickets</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private attachEventCardListeners(): void {
+    document.querySelectorAll('.event-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (!(e.target as Element).classList.contains('get-tickets-btn')) {
+          const eventId = card.getAttribute('data-event-id');
+          if (eventId) this.showEventDetail(eventId);
+        }
+      });
+    });
+
+    document.querySelectorAll('.get-tickets-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const eventId = btn.getAttribute('data-event-id');
+        if (eventId) this.showEventDetail(eventId);
+      });
+    });
+  }
+
+  // Carousel methods
+  private prevCarousel(): void {
+    this.carouselPosition = Math.max(0, this.carouselPosition - 1);
+    this.updateCarouselPosition();
+  }
+
+  private nextCarousel(): void {
+    const carousel = document.getElementById('eventsCarousel');
+    const maxPosition = carousel ? carousel.children.length - 3 : 0;
+    this.carouselPosition = Math.min(maxPosition, this.carouselPosition + 1);
+    this.updateCarouselPosition();
+  }
+
+  private updateCarouselPosition(): void {
+    const carousel = document.getElementById('eventsCarousel');
+    if (carousel) {
+      const translateX = this.carouselPosition * -320; // Card width + gap
+      carousel.style.transform = `translateX(${translateX}px)`;
+    }
+  }
+
+  // Event detail modal
+  private showEventDetail(eventId: string): void {
+    const event = this.events.find(e => e.id === eventId);
+    if (!event) return;
+
+    this.isEventModalOpen = true;
+    const modal = document.getElementById('eventModal');
+    const title = document.getElementById('eventTitle');
+    const content = document.getElementById('eventDetailContent');
+
+    title!.textContent = event.title;
+    content!.innerHTML = this.createEventDetailContent(event);
+
+    modal?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Attach booking listeners
+    this.attachBookingListeners(event);
+  }
+
+  private createEventDetailContent(event: Event): string {
+    const players = event.players ? event.players.join(', ') : 'Not specified';
+    
+    return `
+      <div class="event-detail-image">
+        ${event.image ? `<img src="${event.image}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Event Image'}
+      </div>
+      <div class="event-detail-info">
+        <div>
+          <h3>About This Event</h3>
+          <p class="event-description">${event.description}</p>
+          <div class="event-meta">
+            <h3>Event Details</h3>
+            <div class="meta-item">
+              <span class="meta-label">Category:</span>
+              <span class="meta-value">${event.category}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Date & Time:</span>
+              <span class="meta-value">${this.formatDateTime(event.date)}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Location:</span>
+              <span class="meta-value">${event.location}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Players/Artists:</span>
+              <span class="meta-value">${players}</span>
+            </div>
+          </div>
+        </div>
+        <div class="booking-section">
+          <h3>Book Tickets</h3>
+          <div class="price-display">${event.price === 0 ? 'Free' : '$' + event.price}</div>
+          <div class="quantity-selector">
+            <button class="quantity-btn" id="decreaseQty">-</button>
+            <span class="quantity-display" id="quantity">1</span>
+            <button class="quantity-btn" id="increaseQty">+</button>
+          </div>
+          <div class="total-price" style="margin-bottom: 1rem; font-size: 1.2rem; font-weight: bold;">
+            Total: <span id="totalPrice">${event.price === 0 ? 'Free' : '$' + event.price}</span>
+          </div>
+          <button class="btn btn-primary full-width" id="bookTickets" data-event-id="${event.id}">
+            ${this.currentUser ? 'Book Tickets' : 'Login to Book'}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  private attachBookingListeners(event: Event): void {
+    let quantity = 1;
+    const quantityDisplay = document.getElementById('quantity');
+    const totalPriceDisplay = document.getElementById('totalPrice');
+
+    document.getElementById('decreaseQty')?.addEventListener('click', () => {
+      if (quantity > 1) {
+        quantity--;
+        quantityDisplay!.textContent = quantity.toString();
+        totalPriceDisplay!.textContent = event.price === 0 ? 'Free' : '$' + (event.price * quantity);
+      }
+    });
+
+    document.getElementById('increaseQty')?.addEventListener('click', () => {
+      if (quantity < 10) {
+        quantity++;
+        quantityDisplay!.textContent = quantity.toString();
+        totalPriceDisplay!.textContent = event.price === 0 ? 'Free' : '$' + (event.price * quantity);
+      }
+    });
+
+    document.getElementById('bookTickets')?.addEventListener('click', () => {
+      if (!this.currentUser) {
+        this.closeEventModal();
+        this.openAuthModal('login');
+        return;
+      }
+      this.bookTickets(event.id, quantity);
+    });
+  }
+
+  private bookTickets(eventId: string, quantity: number): void {
+    const event = this.events.find(e => e.id === eventId);
+    if (!event || !this.currentUser) return;
+
+    const booking: Booking = {
+      id: Date.now().toString(),
+      eventId,
+      userId: this.currentUser.id,
+      quantity,
+      totalPrice: event.price * quantity,
+      bookingDate: new Date().toISOString(),
+      status: 'confirmed'
+    };
+
+    this.bookings.push(booking);
+    this.currentUser.bookings.push(booking.id);
+    this.saveToStorage();
+    this.closeEventModal();
+    alert(`Successfully booked ${quantity} ticket(s) for ${event.title}!`);
+  }
+
+  private closeEventModal(): void {
+    this.isEventModalOpen = false;
+    document.getElementById('eventModal')?.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+
+  // Dashboard methods
+  private showDashboard(): void {
+    if (!this.currentUser) {
+      this.openAuthModal('login');
+      return;
+    }
+
+    this.isDashboardVisible = true;
+    document.getElementById('dashboardPage')?.classList.remove('hidden');
+    document.querySelector('.hero')?.classList.add('hidden');
+    document.querySelector('.upcoming-section')?.classList.add('hidden');
+    document.querySelector('.categories-section')?.classList.add('hidden');
+    document.querySelector('.featured-section')?.classList.add('hidden');
+    document.querySelector('.search-results-section')?.classList.add('hidden');
+
+    this.renderUserEvents();
+    this.renderUserBookings();
+  }
+
+  private hideDashboard(): void {
+    this.isDashboardVisible = false;
+    document.getElementById('dashboardPage')?.classList.add('hidden');
+    document.querySelector('.hero')?.classList.remove('hidden');
+    document.querySelector('.upcoming-section')?.classList.remove('hidden');
+    document.querySelector('.categories-section')?.classList.remove('hidden');
+    document.querySelector('.featured-section')?.classList.remove('hidden');
+  }
+
+  private switchTab(tabName: string): void {
+    // Update tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.getAttribute('data-tab') === tabName) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    document.getElementById(tabName)?.classList.add('active');
+  }
+
+  private renderUserEvents(): void {
+    if (!this.currentUser) return;
+
+    const userEventsGrid = document.getElementById('userEvents');
+    const userEvents = this.events.filter(event => event.createdBy === this.currentUser.id);
+
+    if (userEvents.length === 0) {
+      userEventsGrid!.innerHTML = '<p style="text-align: center; color: #888; grid-column: 1/-1;">No events created yet. Create your first event!</p>';
+      return;
+    }
+
+    userEventsGrid!.innerHTML = userEvents.map(event => this.createEventCard(event)).join('');
+    this.attachEventCardListeners();
+  }
+
+  private renderUserBookings(): void {
+    if (!this.currentUser) return;
+
+    const bookingsList = document.getElementById('userBookings');
+    const userBookings = this.bookings.filter(booking => booking.userId === this.currentUser.id);
+
+    if (userBookings.length === 0) {
+      bookingsList!.innerHTML = '<p style="text-align: center; color: #888;">No bookings yet. Book your first event!</p>';
+      return;
+    }
+
+    bookingsList!.innerHTML = userBookings.map(booking => {
+      const event = this.events.find(e => e.id === booking.eventId);
+      return `
+        <div class="booking-card">
+          <h3>${event?.title || 'Unknown Event'}</h3>
+          <p><strong>Date:</strong> ${event ? this.formatDateTime(event.date) : 'N/A'}</p>
+          <p><strong>Quantity:</strong> ${booking.quantity} ticket(s)</p>
+          <p><strong>Total:</strong> $${booking.totalPrice}</p>
+          <p><strong>Booking Date:</strong> ${this.formatDate(booking.bookingDate)}</p>
+          <span class="booking-status">${booking.status}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  private handleCreateEvent(e: Event): void {
+    e.preventDefault();
+    
+    if (!this.currentUser) {
+      alert('Please log in to create events');
+      return;
+    }
+
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const newEvent: Event = {
+      id: Date.now().toString(),
+      title: (form.querySelector('#eventName') as HTMLInputElement).value,
+      artist: 'Event Organizer',
+      category: (form.querySelector('#eventCategory') as HTMLSelectElement).value,
+      location: (form.querySelector('#eventLocation') as HTMLInputElement).value,
+      date: (form.querySelector('#eventDate') as HTMLInputElement).value,
+      price: parseFloat((form.querySelector('#eventPrice') as HTMLInputElement).value) || 0,
+      description: (form.querySelector('#eventDescription') as HTMLTextAreaElement).value,
+      image: (form.querySelector('#eventImage') as HTMLInputElement).value,
+      players: (form.querySelector('#eventPlayers') as HTMLInputElement).value
+        .split(',')
+        .map(player => player.trim())
+        .filter(player => player.length > 0),
+      createdBy: this.currentUser.id
+    };
+
+    this.events.push(newEvent);
+    this.currentUser.events.push(newEvent.id);
+    this.saveToStorage();
+    this.renderEvents();
+    this.renderUserEvents();
+    
+    form.reset();
+    alert('Event created successfully!');
+    this.switchTab('my-events');
+  }
+
+  // Utility methods
+  private formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  private formatDateTime(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  // Storage methods
+  private saveToStorage(): void {
+    localStorage.setItem('eventifyEvents', JSON.stringify(this.events));
+    localStorage.setItem('eventifyUsers', JSON.stringify(this.users));
+    localStorage.setItem('eventifyBookings', JSON.stringify(this.bookings));
+    if (this.currentUser) {
+      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    }
+  }
+
+  private loadFromStorage(): void {
+    const eventsData = localStorage.getItem('eventifyEvents');
+    const usersData = localStorage.getItem('eventifyUsers');
+    const bookingsData = localStorage.getItem('eventifyBookings');
+    const currentUserData = localStorage.getItem('currentUser');
+
+    if (eventsData) {
+      this.events = JSON.parse(eventsData);
+    }
+    if (usersData) {
+      this.users = JSON.parse(usersData);
+    }
+    if (bookingsData) {
+      this.bookings = JSON.parse(bookingsData);
+    }
+    if (currentUserData) {
+      this.currentUser = JSON.parse(currentUserData);
+    }
+  }
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  new EventifyApp();
+});
+
+export {
+
+};
