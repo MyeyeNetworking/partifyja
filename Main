@@ -29,7 +29,7 @@ interface Booking {
   userId: string;
   quantity: number;
   totalPrice: number;
-  bookingDate: string;
+ bookingDate: string;
   status: string;
 }
 
@@ -50,7 +50,6 @@ class EventifyApp {
     this.renderEvents();
     this.updateAuthUI();
   }
-
   // Load sample events data
   private loadSampleData(): void {
     const sampleEvents: Event[] = [
@@ -63,7 +62,7 @@ class EventifyApp {
         date: '2025-08-15T19:00',
         price: 89,
         description: 'Join us for an amazing summer music festival featuring top artists from around the world. Experience unforgettable performances under the stars.',
-        players: ['Taylor Swift', 'Ed Sheeran', 'Billie Eilish', 'The Weeknd']
+        players: 'Taylor Swift', 'Ed Sheeran', 'Billie Eilish', 'The Weeknd']
       },
       {
         id: '2',
@@ -75,7 +74,7 @@ class EventifyApp {
         price: 299,
         description: 'The biggest tech conference of the year featuring keynotes from industry leaders and hands-on workshops.',
         players: ['Satya Nadella', 'Tim Cook', 'Sundar Pichai', 'Elon Musk']
-      },
+      }
       {
         id: '3',
         title: 'Comedy Night Live',
@@ -91,7 +90,7 @@ class EventifyApp {
         id: '4',
         title: 'Art Gallery Opening',
         artist: 'Local Artists',
-        category: 'art',
+       category: 'art',
         location: 'Downtown Gallery',
         date: '2025-08-10T18:00',
         price: 0,
@@ -104,7 +103,7 @@ class EventifyApp {
         artist: 'Chef Collaborations',
         category: 'food',
         location: 'Napa Valley, CA',
-        date: '2025-09-05T12:00',
+        date: '202509-05T12:00',
         price: 125,
         description: 'Indulge in exquisite culinary experiences with renowned chefs and premium wine tastings.',
         players: ['Gordon Ramsay', 'Julia Child', 'Anthony Bourdain', 'Emeril Lagasse']
@@ -117,7 +116,7 @@ class EventifyApp {
         location: 'Madison Square Garden, NYC',
         date: '2025-10-15T20:00',
         price: 150,
-        description: 'An electrifying night of rock music featuring legendary bands and rising stars.',
+        description: 'An electrifing night of rock music featuring legendary bands and rising stars.',
         players: ['Foo Fighters', 'Red Hot Chili Peppers', 'Arctic Monkeys', 'Imagine Dragons']
       }
     ];
@@ -132,14 +131,14 @@ class EventifyApp {
   // Initialize all event listeners
   private initializeEventListeners(): void {
     // Auth buttons
-    document.getElementById('loginBtn')?.addEventListener('click', () => this.openAuthModal('login'));
+    document.getElementById('loginBtn')?.addEventListener'click', () => this.openAuthModal('login'));
     document.getElementById('signupBtn')?.addEventListener('click', () => this.openAuthModal('signup'));
     document.getElementById('logoutBtn')?.addEventListener('click', () => this.logout());
     document.getElementById('dashboardBtn')?.addEventListener('click', () => this.showDashboard());
     document.getElementById('backToMain')?.addEventListener('click', () => this.hideDashboard());
 
     // Modal close buttons
-    document.getElementById('closeModal')?.addEventListener('click', () => this.closeAuthModal());
+    document.getElementById('closeModal')?.ddEventListener('click', () => this.closeAuthModal());
     document.getElementById('closeEventModal')?.addEventListener('click', () => this.closeEventModal());
 
     // Auth form
@@ -147,7 +146,7 @@ class EventifyApp {
     document.getElementById('authSwitchLink')?.addEventListener('click', (e) => this.switchAuthMode(e));
 
     // Search functionality
-    document.getElementById('searchBtn')?.addEventListener('click', () => this.performSearch());
+    document.getElementById('searchBtn')?.addEventListener('click', () => this.performSearch();
     document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.performSearch();
     });
@@ -156,7 +155,7 @@ class EventifyApp {
     // Filter changes
     document.getElementById('categoryFilter')?.addEventListener('change', () => this.performSearch());
     document.getElementById('dateFilter')?.addEventListener('change', () => this.performSearch());
-    document.getElementById('locationFilter')?.addEventListener('change', () => this.performSearch());
+    document.getElementById('locationFlter')?.addEventListener('change', () => this.performSearch());
     document.getElementById('priceFilter')?.addEventListener('change', () => this.performSearch());
 
     // Carousel controls
@@ -165,7 +164,7 @@ class EventifyApp {
 
     // Category cards
     document.querySelectorAll('.category-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', () = {
         const category = card.getAttribute('data-category');
         if (category) this.filterByCategory(category);
       });
@@ -181,7 +180,7 @@ class EventifyApp {
 
     // Create event form
     document.getElementById('createEventForm')?.addEventListener('submit', (e) => this.handleCreateEvent(e));
-    document.getElementById('createEventBtn')?.addEventListener('click', () => this.switchTab('create-event'));
+    ocument.getElementById('createEventBtn')?.addEventListener('click', () => this.switchTab('create-event'));
 
     // Modal backdrop click
     document.getElementById('authModal')?.addEventListener('click', (e) => {
@@ -192,7 +191,7 @@ class EventifyApp {
     });
   }
 
-  // Authentication methods
+  // Authentication method
   private openAuthModal(mode: 'login' | 'signup'): void {
     this.isAuthModalOpen = true;
     const modal = document.getElementById('authModal');
@@ -203,7 +202,7 @@ class EventifyApp {
     const nameGroup = document.getElementById('nameGroup');
 
     if (mode === 'login') {
-      title!.textContent = 'Log In';
+      title!.textConten = 'Log In';
       submitBtn!.textContent = 'Log In';
       switchText!.textContent = "Don't have an account?";
       switchLink!.textContent = 'Sign up';
@@ -217,7 +216,7 @@ class EventifyApp {
     }
 
     modal?.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    document.body.style.oerflow = 'hidden';
   }
 
   private closeAuthModal(): void {
@@ -236,7 +235,7 @@ class EventifyApp {
     }, 100);
   }
 
-  private handleAuthSubmit(e: Event): void {
+  prvate handleAuthSubmit(e: Event): void {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const email = (form.querySelector('#email') as HTMLInputElement).value;
@@ -245,7 +244,7 @@ class EventifyApp {
     const isSignup = document.getElementById('authTitle')?.textContent === 'Sign Up';
 
     if (isSignup) {
-      this.signup(email, password, fullName || '');
+      this.signup(email, password, fullName || '')
     } else {
       this.login(email, password);
     }
@@ -268,7 +267,7 @@ class EventifyApp {
       bookings: []
     };
 
-    this.users.push(newUser);
+    this.users.puh(newUser);
     this.currentUser = newUser;
     this.saveToStorage();
     this.closeAuthModal();
@@ -286,7 +285,7 @@ class EventifyApp {
 
     this.currentUser = user;
     this.saveToStorage();
-    this.closeAuthModal();
+    this.closeAthModal();
     this.updateAuthUI();
     alert('Logged in successfully!');
   }
@@ -306,7 +305,7 @@ class EventifyApp {
 
   private updateAuthUI(): void {
     const loginBtn = document.getElementById('loginBtn');
-    const signupBtn = document.getElementById('signupBtn');
+    const sigupBtn = document.getElementById('signupBtn');
     const userMenu = document.getElementById('userMenu');
     const userName = document.getElementById('userName');
 
@@ -318,7 +317,7 @@ class EventifyApp {
     } else {
       loginBtn?.classList.remove('hidden');
       signupBtn?.classList.remove('hidden');
-      userMenu?.classList.add('hidden');
+      userMenu?.classLst.add('hidden');
     }
   }
 
@@ -331,7 +330,7 @@ class EventifyApp {
     const searchTerm = (document.getElementById('searchInput') as HTMLInputElement).value.toLowerCase();
     const categoryFilter = (document.getElementById('categoryFilter') as HTMLSelectElement).value;
     const dateFilter = (document.getElementById('dateFilter') as HTMLInputElement).value;
-    const locationFilter = (document.getElementById('locationFilter') as HTMLInputElement).value.toLowerCase();
+   const locationFilter = (document.getElementById('locationFilter') as HTMLInputElement).value.toLowerCase();
     const priceFilter = (document.getElementById('priceFilter') as HTMLSelectElement).value;
 
     let filteredEvents = this.events.filter(event => {
@@ -339,7 +338,7 @@ class EventifyApp {
         event.title.toLowerCase().includes(searchTerm) ||
         event.artist.toLowerCase().includes(searchTerm) ||
         event.location.toLowerCase().includes(searchTerm) ||
-        (event.players && event.players.some(player => player.toLowerCase().includes(searchTerm)));
+        (event.player && event.players.some(player => player.toLowerCase().includes(searchTerm)));
 
       const matchesCategory = categoryFilter === '' || event.category === categoryFilter;
       
@@ -349,7 +348,7 @@ class EventifyApp {
       
       const matchesPrice = priceFilter === '' || this.checkPriceRange(event.price, priceFilter);
 
-      return matchesSearch && matchesCategory && matchesDate && matchesLocation && matchesPrice;
+      return matchesSearch &&matchesCategory && matchesDate && matchesLocation && matchesPrice;
     });
 
     this.displaySearchResults(filteredEvents, searchTerm);
@@ -365,7 +364,7 @@ class EventifyApp {
     }
   }
 
-  private displaySearchResults(events: Event[], searchTerm: string): void {
+  private displaySearchResults(events: Event[], searcherm: string): void {
     const resultsSection = document.getElementById('searchResults');
     const resultsGrid = document.getElementById('searchResultsGrid');
     const resultsCount = document.getElementById('resultsCount');
@@ -375,7 +374,7 @@ class EventifyApp {
       resultsSection?.classList.remove('hidden');
       featuredSection?.classList.add('hidden');
       resultsCount!.textContent = `${events.length} events found`;
-      resultsGrid!.innerHTML = events.map(event => this.createEventCard(event)).join('');
+      resltsGrid!.innerHTML = events.map(event => this.createEventCard(event)).join('');
       this.attachEventCardListeners();
     } else {
       resultsSection?.classList.add('hidden');
@@ -389,7 +388,7 @@ class EventifyApp {
     document.getElementById('searchResults')?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Event rendering methods
+  // Eventrendering methods
   private renderEvents(): void {
     this.renderCarousel();
     this.renderFeaturedEvents();
@@ -404,7 +403,7 @@ class EventifyApp {
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(0, 10);
 
-    carousel.innerHTML = upcomingEvents.map(event => this.createCarouselCard(event)).join('');
+    carousel.innerHTML = upcomingEvents.map(event => this.createCaroselCard(event)).join('');
     this.attachEventCardListeners();
   }
 
@@ -418,7 +417,7 @@ class EventifyApp {
   }
 
   private createCarouselCard(event: Event): string {
-    const players = event.players ? event.players.slice(0, 3).join(', ') : '';
+    const players = event.players ? event.players.slice(, 3).join(', ') : '';
     const playersText = players ? `<div class="event-players">Players: ${players}</div>` : '';
     
     return `
@@ -427,7 +426,7 @@ class EventifyApp {
           <span class="event-category">${event.category}</span>
           ${event.image ? `<img src="${event.image}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Event Image'}
         </div>
-        <div class="event-content">
+        <div class="event-conent">
           <h3 class="event-title">${event.title}</h3>
           <p class="event-artist">${event.artist}</p>
           ${playersText}
@@ -437,7 +436,7 @@ class EventifyApp {
           </div>
           <div class="event-footer">
             <span class="event-price">${event.price === 0 ? 'Free' : '$' + event.price}</span>
-            <button class="btn btn-primary btn-small get-tickets-btn" data-event-id="${event.id}">Get Tickets</button>
+            <button class="btn btn-rimary btn-small get-tickets-btn" data-event-id="${event.id}">Get Tickets</button>
           </div>
         </div>
       </div>
@@ -451,7 +450,7 @@ class EventifyApp {
     return `
       <div class="event-card" data-event-id="${event.id}">
         <div class="event-image">
-          <span class="event-category">${event.category}</span>
+          <span class="event-category"${event.category}</span>
           ${event.image ? `<img src="${event.image}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Event Image'}
         </div>
         <div class="event-content">
@@ -460,7 +459,7 @@ class EventifyApp {
           ${playersText}
           <div class="event-details">
             <span class="event-location">📍 ${event.location}</span>
-            <span class="event-date">📅 ${this.formatDate(event.date)}</span>
+            <span class="event-date">📅 ${thi.formatDate(event.date)}</span>
           </div>
           <div class="event-footer">
             <span class="event-price">${event.price === 0 ? 'Free' : '$' + event.price}</span>
@@ -473,7 +472,7 @@ class EventifyApp {
 
   private attachEventCardListeners(): void {
     document.querySelectorAll('.event-card').forEach(card => {
-      card.addEventListener('click', (e) => {
+      card.addEventListener('click', (e) => 
         if (!(e.target as Element).classList.contains('get-tickets-btn')) {
           const eventId = card.getAttribute('data-event-id');
           if (eventId) this.showEventDetail(eventId);
@@ -490,7 +489,7 @@ class EventifyApp {
     });
   }
 
-  // Carousel methods
+  // Carousl methods
   private prevCarousel(): void {
     this.carouselPosition = Math.max(0, this.carouselPosition - 1);
     this.updateCarouselPosition();
@@ -504,7 +503,7 @@ class EventifyApp {
   }
 
   private updateCarouselPosition(): void {
-    const carousel = document.getElementById('eventsCarousel');
+    const carousel = document.gtElementById('eventsCarousel');
     if (carousel) {
       const translateX = this.carouselPosition * -320; // Card width + gap
       carousel.style.transform = `translateX(${translateX}px)`;
@@ -518,8 +517,7 @@ class EventifyApp {
 
     this.isEventModalOpen = true;
     const modal = document.getElementById('eventModal');
-    const title = document.getElementById('eventTitle');
-    const content = document.getElementById('eventDetailContent');
+    const title = document.getElementById('eventTitle');    const content = document.getElementById('eventDetailContent');
 
     title!.textContent = event.title;
     content!.innerHTML = this.createEventDetailContent(event);
@@ -535,7 +533,7 @@ class EventifyApp {
     const players = event.players ? event.players.join(', ') : 'Not specified';
     
     return `
-      <div class="event-detail-image">
+      <div class="evnt-detail-image">
         ${event.image ? `<img src="${event.image}" alt="${event.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 'Event Image'}
       </div>
       <div class="event-detail-info">
@@ -546,7 +544,7 @@ class EventifyApp {
             <h3>Event Details</h3>
             <div class="meta-item">
               <span class="meta-label">Category:</span>
-              <span class="meta-value">${event.category}</span>
+              <spa class="meta-value">${event.category}</span>
             </div>
             <div class="meta-item">
               <span class="meta-label">Date & Time:</span>
@@ -557,7 +555,7 @@ class EventifyApp {
               <span class="meta-value">${event.location}</span>
             </div>
             <div class="meta-item">
-              <span class="meta-label">Players/Artists:</span>
+              <span class="meta-label">layers/Artists:</span>
               <span class="meta-value">${players}</span>
             </div>
           </div>
@@ -568,7 +566,7 @@ class EventifyApp {
           <div class="quantity-selector">
             <button class="quantity-btn" id="decreaseQty">-</button>
             <span class="quantity-display" id="quantity">1</span>
-            <button class="quantity-btn" id="increaseQty">+</button>
+            <button class="quantity-bn" id="increaseQty">+</button>
           </div>
           <div class="total-price" style="margin-bottom: 1rem; font-size: 1.2rem; font-weight: bold;">
             Total: <span id="totalPrice">${event.price === 0 ? 'Free' : '$' + event.price}</span>
@@ -581,7 +579,7 @@ class EventifyApp {
     `;
   }
 
-  private attachBookingListeners(event: Event): void {
+  private attachBokingListeners(event: Event): void {
     let quantity = 1;
     const quantityDisplay = document.getElementById('quantity');
     const totalPriceDisplay = document.getElementById('totalPrice');
@@ -594,7 +592,7 @@ class EventifyApp {
       }
     });
 
-    document.getElementById('increaseQty')?.addEventListener('click', () => {
+    documen.getElementById('increaseQty')?.addEventListener('click', () => {
       if (quantity < 10) {
         quantity++;
         quantityDisplay!.textContent = quantity.toString();
@@ -608,7 +606,7 @@ class EventifyApp {
         this.openAuthModal('login');
         return;
       }
-      this.bookTickets(event.id, quantity);
+      this.bookickets(event.id, quantity);
     });
   }
 
@@ -627,7 +625,7 @@ class EventifyApp {
     };
 
     this.bookings.push(booking);
-    this.currentUser.bookings.push(booking.id);
+    this.currntUser.bookings.push(booking.id);
     this.saveToStorage();
     this.closeEventModal();
     alert(`Successfully booked ${quantity} ticket(s) for ${event.title}!`);
@@ -646,7 +644,7 @@ class EventifyApp {
       return;
     }
 
-    this.isDashboardVisible = true;
+    this.isashboardVisible = true;
     document.getElementById('dashboardPage')?.classList.remove('hidden');
     document.querySelector('.hero')?.classList.add('hidden');
     document.querySelector('.upcoming-section')?.classList.add('hidden');
@@ -655,7 +653,7 @@ class EventifyApp {
     document.querySelector('.search-results-section')?.classList.add('hidden');
 
     this.renderUserEvents();
-    this.renderUserBookings();
+    this.rendeUserBookings();
   }
 
   private hideDashboard(): void {
@@ -667,7 +665,7 @@ class EventifyApp {
     document.querySelector('.featured-section')?.classList.remove('hidden');
   }
 
-  private switchTab(tabName: string): void {
+  private switchTab(tabName: string): void 
     // Update tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.remove('active');
@@ -684,7 +682,7 @@ class EventifyApp {
   }
 
   private renderUserEvents(): void {
-    if (!this.currentUser) return;
+    if (!this.currentUser) rturn;
 
     const userEventsGrid = document.getElementById('userEvents');
     const userEvents = this.events.filter(event => event.createdBy === this.currentUser.id);
@@ -696,7 +694,7 @@ class EventifyApp {
 
     userEventsGrid!.innerHTML = userEvents.map(event => this.createEventCard(event)).join('');
     this.attachEventCardListeners();
-  }
+  
 
   private renderUserBookings(): void {
     if (!this.currentUser) return;
@@ -710,7 +708,7 @@ class EventifyApp {
     }
 
     bookingsList!.innerHTML = userBookings.map(booking => {
-      const event = this.events.find(e => e.id === booking.eventId);
+      const event = this.vents.find(e => e.id === booking.eventId);
       return `
         <div class="booking-card">
           <h3>${event?.title || 'Unknown Event'}</h3>
@@ -718,7 +716,7 @@ class EventifyApp {
           <p><strong>Quantity:</strong> ${booking.quantity} ticket(s)</p>
           <p><strong>Total:</strong> $${booking.totalPrice}</p>
           <p><strong>Booking Date:</strong> ${this.formatDate(booking.bookingDate)}</p>
-          <span class="booking-status">${booking.status}</span>
+          <span class="booking-status">${bookng.status}</span>
         </div>
       `;
     }).join('');
@@ -739,13 +737,13 @@ class EventifyApp {
       id: Date.now().toString(),
       title: (form.querySelector('#eventName') as HTMLInputElement).value,
       artist: 'Event Organizer',
-      category: (form.querySelector('#eventCategory') as HTMLSelectElement).value,
+      categor: (form.querySelector('#eventCategory') as HTMLSelectElement).value,
       location: (form.querySelector('#eventLocation') as HTMLInputElement).value,
       date: (form.querySelector('#eventDate') as HTMLInputElement).value,
       price: parseFloat((form.querySelector('#eventPrice') as HTMLInputElement).value) || 0,
       description: (form.querySelector('#eventDescription') as HTMLTextAreaElement).value,
       image: (form.querySelector('#eventImage') as HTMLInputElement).value,
-      players: (form.querySelector('#eventPlayers') as HTMLInputElement).value
+      players: (form.queySelector('#eventPlayers') as HTMLInputElement).value
         .split(',')
         .map(player => player.trim())
         .filter(player => player.length > 0),
@@ -764,7 +762,7 @@ class EventifyApp {
   }
 
   // Utility methods
-  private formatDate(dateString: string): string {
+  private formatDate(dteString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -785,7 +783,7 @@ class EventifyApp {
   }
 
   // Storage methods
-  private saveToStorage(): void {
+  private saveToStorage(): vod {
     localStorage.setItem('eventifyEvents', JSON.stringify(this.events));
     localStorage.setItem('eventifyUsers', JSON.stringify(this.users));
     localStorage.setItem('eventifyBookings', JSON.stringify(this.bookings));
@@ -797,7 +795,7 @@ class EventifyApp {
   private loadFromStorage(): void {
     const eventsData = localStorage.getItem('eventifyEvents');
     const usersData = localStorage.getItem('eventifyUsers');
-    const bookingsData = localStorage.getItem('eventifyBookings');
+    cont bookingsData = localStorage.getItem('eventifyBookings');
     const currentUserData = localStorage.getItem('currentUser');
 
     if (eventsData) {
@@ -816,10 +814,114 @@ class EventifyApp {
 }
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMontentLoaded', () => {
   new EventifyApp();
 });
 
-export {
+export {};
 
-};
+  private carouselPosition = 0;
+  private isAuthModalOpen = false;
+  private isEventModalOpen = false;
+  private isDashboardVisible = false; →   private carouselPosition = 0;
+
+    document.getElementById('authForm')?.addEventListener('submit', (e) => this.handleAuthSubmit(e));
+    document.getElementById('authSwitchLink')?.addEventListener('click', (e) => this.switchAuthMode(e)); →     document.getElementById('authForm')?.addEventListener('submit', (e) => this.handleAuthSubmit(e as SubmitEvent));
+    document.getElementById('authSwitchLink')?.addEventListener('click', (e) => this.switchAuthMode(e as MouseEvent));
+
+
+
+
+
+    document.getElementById('createEventForm')?.addEventListener('submit', (e) => this.handleCreateEvent(e)); →     document.getElementById('createEventForm')?.addEventListener('submit', (e) => this.handleCreateEvent(e as SubmitEvent));
+
+
+
+  private openAuthModal(mode: 'login' | 'signup'): void {
+    this.isAuthModalOpen = true; →   private openAuthModal(mode: 'login' | 'signup'): void {
+      
+      
+      
+      
+        private closeAuthModal(): void {
+    this.isAuthModalOpen = false; →   private closeAuthModal(): void {
+      
+      
+      
+      
+        private switchAuthMode(e: Event): void { →   private switchAuthMode(e: MouseEvent): void {
+          
+          
+          
+            private handleAuthSubmit(e: Event): void { →   private handleAuthSubmit(e: SubmitEvent): void {
+              
+              
+                private signup(email: string, password: string, name: string): void { →   private signup(email: string, _password: string, name: string): void {
+                  
+                  
+                  
+                  
+                  
+                    private login(email: string, password: string): void { →   private login(email: string, _password: string): void {
+                      
+                      
+                      
+                      
+                      
+                        private showEventDetail(eventId: string): void {
+    const event = this.events.find(e => e.id === eventId);
+    if (!event) return;
+
+    this.isEventModalOpen = true; →   private showEventDetail(eventId: string): void {
+    const event = this.events.find(e => e.id === eventId);
+    if (!event) return;
+
+
+
+
+  private closeEventModal(): void {
+    this.isEventModalOpen = false; →   private closeEventModal(): void {
+      
+      
+      
+      
+      
+        private showDashboard(): void {
+    if (!this.currentUser) {
+      this.openAuthModal('login');
+      return;
+    }
+
+    this.isDashboardVisible = true; →   private showDashboard(): void {
+    if (!this.currentUser) {
+      this.openAuthModal('login');
+      return;
+    }
+      
+      
+      
+      
+      
+        private hideDashboard(): void {
+    this.isDashboardVisible = false; →   private hideDashboard(): void {
+      
+      
+      
+      
+      
+          const userEvents = this.events.filter(event => event.createdBy === this.currentUser.id); →     const userEvents = this.events.filter(event => event.createdBy === this.currentUser!.id);
+
+
+
+
+    const userBookings = this.bookings.filter(booking => booking.userId === this.currentUser.id); →     const userBookings = this.bookings.filter(booking => booking.userId === this.currentUser!.id);
+
+
+
+  private handleCreateEvent(e: Event): void { →   private handleCreateEvent(e: SubmitEvent): void {
+    
+    
+    
+    
+        const form = e.target as HTMLFormElement;
+    const formData = new FormData(form); →     const form = e.target as HTMLFormElement;
